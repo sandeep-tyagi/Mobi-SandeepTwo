@@ -1,0 +1,13 @@
+PROCEDURE "MOBI"."MobiProcedure::GetCountry" ( )
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name>
+   READS SQL DATA AS
+BEGIN
+   /*************************************
+       Write your procedure logic 
+   *************************************/
+   select  * from "MOBI"."MST_COUNTRY" ;
+   
+   -- select TOP 10 *  from "CELEKONDMS"."CUSTOMER_MASTER"
+END

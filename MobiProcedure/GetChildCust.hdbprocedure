@@ -1,0 +1,12 @@
+PROCEDURE "MOBI"."MobiProcedure::GetChildCust" (
+    in ParentCode varchar(20))
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name>
+   READS SQL DATA AS
+BEGIN
+
+   select cust_code,cust_name from "CELEKONDMS"."CUSTOMER_MASTER" where PARENT_CUST_CODE = ParentCode
+ and status = 'Active';
+   
+END

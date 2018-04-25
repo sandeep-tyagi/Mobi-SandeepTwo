@@ -1,0 +1,44 @@
+PROCEDURE "MOBI"."MobiProcedure::MST_EMPLOYEE" (in EMPLOYEE_ID Integer, in EmpCode varchar(50),in EmpName VARCHAR(200),
+in Address1 varchar(500),in Address2 VARCHAR(500),
+in Country varchar(50),in State VARCHAR(60),
+in District varchar(60),in PhoneNo VARCHAR(13),
+in EmailId varchar(50),in RoleId Integer,
+in POSITION_ID varchar(15),
+in Status integer,in fromdate date,in tilldate date,
+in SOFT_DEL  varchar(2) ,in CREATE_BY varchar(20), in CREATE_DATE date ,
+in MODIFIED_BY varchar(20), in modifiedDate date ,
+  in Command_type varchar(30))
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name> 
+   --READS SQL DATA 
+   /*,ROLE_ID,POSITION_ID,POSITION_VALUE
+:RoleId,:POSITION_ID,:POSITION_VALUE*/
+/*Role Id is not upload some issues in role and position id*/
+   AS
+BEGIN
+  IF(:Command_type = 'INSERT')
+THEN
+INSERT INTO "MOBI"."MST_EMPLOYEE" (EMPLOYEE_CODE,EMPLOYEE_NAME,ADDRESS1,ADDRESS2,COUNTRY,STATE,DISTRICT,PHONE_NUMBER,EMAIL,ROLE_POSITION_ID,POSITION_VALUE_ID,STATUS)
+VALUES(:EmpCode,:EmpName,:Address1,:Address2,:Country,:State,:District,:PhoneNo,:EmailId,:RoleId,:POSITION_ID,:Status);
+ END IF ;
+  IF(:Command_type = 'SELECT')
+THEN
+Select EMPLOYEE_CODE,EMPLOYEE_NAME,ADDRESS1,ADDRESS2,COUNTRY,STATE,DISTRICT,PHONE_NUMBER,EMAIL,ROLE_POSITION_ID,POSITION_VALUE_ID,STATUS,ACTIVE_DATE,ACTIVE_TILL_DATE from  "MOBI"."MST_EMPLOYEE"
+where SOFT_DEL=:SOFT_DEL;
+ END IF ;
+  
+  IF(:Command_type = 'StatusUpdateActive')
+THEN
+UPDATE "MOBI"."MST_EMPLOYEE" SET STATUS=:Status, ACTIVE_DATE=:fromdate where EMPLOYEE_CODE=:EmpCode;
+ END IF ;
+  IF(:Command_type = 'StatusUpdateDeactive')
+THEN
+UPDATE "MOBI"."MST_EMPLOYEE" SET STATUS=:Status, ACTIVE_TILL_DATE=:fromdate where EMPLOYEE_CODE=:EmpCode;
+ END IF ;
+  IF(:Command_type = 'StatusUpdateDelete')
+THEN
+UPDATE "MOBI"."MST_EMPLOYEE" SET SOFT_DEL=:SOFT_DEL where EMPLOYEE_CODE=:EmpCode;
+ END IF ;
+  
+END

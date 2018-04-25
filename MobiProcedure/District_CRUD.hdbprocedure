@@ -1,0 +1,58 @@
+PROCEDURE "MOBI"."MobiProcedure::District_CRUD" (
+in districtCode VARCHAR(20),in districtName VARCHAR(30),in stateCode VARCHAR(20),
+  in Command_type varchar(30))
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name>
+   /*READS SQL DATA AS*/
+   AS
+BEGIN
+
+IF(:Command_type = 'INSERT')
+THEN
+INSERT INTO "MOBI"."MST_DISTRICT"("DISTRICT_CODE","DISTRICT_NAME","STATE_CODE") VALUES(:districtCode,:districtName,:stateCode);
+ END IF ;
+ IF(:Command_type = 'UPDATE')
+THEN
+ UPDATE "MOBI"."MST_DISTRICT" SET DISTRICT_NAME=:districtName, STATE_CODE=:stateCode where DISTRICT_CODE=:districtCode;
+ END IF ;
+IF (:Command_type = 'SELECT')
+THEN 
+ select * FROM "MOBI"."MST_DISTRICT" ;
+ END IF ;
+ 
+ 
+   IF (:Command_type = 'SELECTDIS')
+        THEN 
+            SELECT d.DISTRICT_CODE, 
+                       d.DISTRICT_NAME, 
+                       s.STATE_CODE, 
+                       s.STATE_NAME, 
+                       s.COUNTRY_CODE, 
+                       r.REGION_CODE, 
+                       r.REGION_NAME 
+                        FROM   "MOBI"."MST_DISTRICT" AS d 
+                       JOIN "MOBI"."MST_STATE" AS s 
+                        ON d.STATE_CODE = s.STATE_CODE 
+                       JOIN "MOBI"."MST_REGION" AS r 
+                        ON r.REGION_CODE = s.REGION_CODE 
+                        WHERE  d.DISTRICT_CODE = :districtCode 
+                       AND d.SOFT_DEL = '0' 
+                       AND s.SOFT_DEL = '0' 
+                       AND r.SOFT_DEL = '0'; 
+    END IF ;
+IF(:Command_type='DISTRICTAREA')
+THEN
+ select  * FROM "MOBI"."MST_AREA" where DISTRICT_CODE =  :districtCode;
+ END IF;
+ IF(:Command_type='DISTRICTZONE')
+THEN
+ select  * FROM "MOBI"."MST_ZONE" where AREA_CODE =  :districtCode;
+ END IF;
+ IF(:Command_type='DISTRICTBRANCH')
+THEN
+ select  * FROM "MOBI"."MST_BRANCH" where ZONE_CODE =  :districtCode;
+ END IF;
+ 
+ 
+ END 

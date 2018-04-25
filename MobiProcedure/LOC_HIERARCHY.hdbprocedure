@@ -1,0 +1,33 @@
+PROCEDURE "MOBI"."MobiProcedure::LOC_HIERARCHY" (
+in LochieId INTEGER ,in locId INTEGER ,in parentLocId INTEGER,
+in softDel  varchar(2) ,in CREATE_BY varchar(20), in CREATE_DATE date ,
+in MODIFIED_BY varchar(20), in modifiedDate date ,
+  in Command_type varchar(30))
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name>
+   /*READS SQL DATA AS*/
+   AS
+BEGIN
+IF(:Command_type = 'INSERT')
+THEN
+INSERT INTO "MOBI"."LOC_HIERARCHY" (LOC_ID , PARENT_LOC_ID )  VALUES(:locId,:parentLocId);
+ END IF ;
+IF (:Command_type = 'SELECT')
+THEN 
+    select MLOC.LOCATION_NAME ,LOC.LOC_ID,PLOC.LOCATION_NAME as PARENT_LOCATION_NAME,LOC.PARENT_LOC_ID,LOC.LOCHIE_ID
+    FROM "MOBI"."LOC_HIERARCHY" LOC join "MOBI"."MST_LOCATION" MLOC
+    on MLOC.LOCATION_ID = LOC.LOC_ID
+    join "MOBI"."MST_LOCATION" PLOC ON PLOC.LOCATION_ID = LOC.PARENT_LOC_ID  WHERE LOC.SOFT_DEL=0;
+ END IF ;
+  IF (:Command_type = 'UPDATE')
+THEN 
+ UPDATE "MOBI"."LOC_HIERARCHY" SET LOC_ID=:locId, PARENT_LOC_ID=:parentLocId , MODIFIED_DATE=:modifiedDate  where LOCHIE_ID=:LochieId;
+ END IF ;
+ IF (:Command_type = 'DELETE')
+THEN 
+ UPDATE "MOBI"."LOC_HIERARCHY" SET SOFT_DEL=:softDel where LOCHIE_ID=:LochieId;
+ END IF ;
+ 
+ 
+ END 

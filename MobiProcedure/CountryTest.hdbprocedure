@@ -1,0 +1,26 @@
+PROCEDURE "MOBI"."MobiProcedure::CountryTest" ( in CountryCode VARCHAR(50), IN CountryName VARCHAR(50),IN Command_type VARCHAR(30))
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   AS
+   
+BEGIN
+  DECLARE whereClause varchar(3000) := '';
+  DECLARE FINALQUERY varchar(3000) :='';
+  
+  IF :CountryCode != 'null'
+  THEN 
+   whereClause := whereClause + ' AND COUNTRY_CODE=' + :CountryCode  ;
+  END IF;
+  IF :CountryName != 'null'
+   THEN
+   whereClause := whereClause  + ' AND COUNTRY_NAME=' + :CountryName;
+   END IF;
+   IF whereClause = ''
+   THEN
+   FINALQUERY := 'SELECT * FROM "MOBI"."MST_COUNTRY" WHERE SOFT_DEL=0' ;
+   ELSE
+   FINALQUERY := 'SELECT * FROM "MOBI"."MST_COUNTRY" WHERE SOFT_DEL=0 ' + whereClause;
+   END IF;
+   EXECUTE IMMEDIATE FINALQUERY ;
+  
+END

@@ -1,0 +1,50 @@
+PROCEDURE "MOBI"."MobiProcedure::UserAuthDetail" ( 
+    in EmployeeCode varchar(50),
+    in MenuName varchar(50),
+    in Command_type varchar(30)
+)
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name>
+  -- READS SQL DATA 
+   AS
+BEGIN
+  IF(:Command_type = 'EmpEligibleMenu')
+THEN
+SELECT distinct menu.MENU_NAME
+FROM   "MOBI"."MST_EMPLOYEE" AS Emp 
+       INNER JOIN "MOBI"."MAP_ROLE_POS_ATTR" AS RolePosAtt 
+               ON Emp.ROLE_POSITION_ID = RolePosAtt.ROLE_POS_ID 
+       INNER JOIN "MOBI"."MST_SUB_MENU" AS SubMenu 
+               ON RolePosAtt.SUB_MENU_ID = SubMenu.SUBMENU_ID 
+       INNER JOIN "MOBI"."MST_MENU" AS menu 
+               ON SubMenu.MENU_ID = menu.MENU_ID 
+       INNER JOIN "MOBI"."MST_ATTRIBUTE" AS attri 
+               ON RolePosAtt.ATTRIBUTE_ID = attri.ATTRIBUTE_ID 
+WHERE  Emp.EMPLOYEE_CODE = EmployeeCode;
+ END IF ;
+  IF(:Command_type = 'UserConfiguration')
+THEN
+SELECT distinct SubMenu.SUB_MENU_NAME,SubMenu.KEY,SubMenu.ICON
+FROM   "MOBI"."MST_EMPLOYEE" AS Emp 
+       INNER JOIN "MOBI"."MAP_ROLE_POS_ATTR" AS RolePosAtt 
+               ON Emp.ROLE_POSITION_ID = RolePosAtt.ROLE_POS_ID 
+       INNER JOIN "MOBI"."MST_SUB_MENU" AS SubMenu 
+               ON RolePosAtt.SUB_MENU_ID = SubMenu.SUBMENU_ID 
+        INNER JOIN "MOBI"."MST_MENU" AS menu 
+               ON SubMenu.MENU_ID = menu.MENU_ID        
+               WHERE  Emp.EMPLOYEE_CODE = EmployeeCode and menu.MENU_NAME = MenuName;
+ END IF ;
+ 
+ IF(:Command_type = 'UserConfigurationAttribute')
+THEN
+SELECT distinct Attri.ATTRIBUTE_NAME,Attri.ATTRIBUTE_ID
+FROM   "MOBI"."MST_EMPLOYEE" AS Emp 
+       INNER JOIN "MOBI"."MAP_ROLE_POS_ATTR" AS RolePosAtt 
+               ON Emp.ROLE_POSITION_ID = RolePosAtt.ROLE_POS_ID 
+       INNER JOIN "MOBI"."MST_SUB_MENU" AS SubMenu 
+               ON RolePosAtt.SUB_MENU_ID = SubMenu.SUBMENU_ID 
+        inner join "MOBI"."MST_ATTRIBUTE" as Attri on RolePosAtt.ATTRIBUTE_ID = Attri.ATTRIBUTE_ID       
+               WHERE  Emp.EMPLOYEE_CODE = EmployeeCode and SubMenu.SUB_MENU_NAME = MenuName;
+ END IF ;
+END

@@ -1,0 +1,12 @@
+PROCEDURE "MOBI"."MobiProcedure::GetMaterial" ( 
+    
+)
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name>
+   READS SQL DATA AS
+BEGIN
+   /*select distinct m.MATERIAL_CODE,m.MATERIAL_DESC,p.sale_price from "CELEKONDMS"."MATERIAL_MASTER" as m inner join "CELEKONDMS"."PRICE_MASTER" as p on p.MATERIAL_CODE = m.MATERIAL_CODE where CUST_TYPE_SALER = (select distinct cust_type from "CELEKONDMS"."CUSTOMER_MASTER" where CUST_CODE = CustCode) and MONTH(valid_from) = MONTH(CURRENT_TIMESTAMP) 
+   and STATE = (select distinct state from "CELEKONDMS"."CUSTOMER_MASTER" where CUST_CODE = CustCode);*/
+ select distinct MATERIAL_CODE,MATERIAL_DESC from "CELEKONDMS"."MATERIAL_MASTER";
+END
