@@ -1,0 +1,4 @@
+role MobiAPI::MobiRole extends role sap.hana.admin.roles::Monitoring
+{
+
+}
